@@ -5,5 +5,3 @@
 
 *.lock
 *.log
-*.sqlite3
-!gemfiles/**/*.sqlite3
