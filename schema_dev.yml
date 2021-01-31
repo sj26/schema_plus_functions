@@ -4,3 +4,5 @@ activerecord:
     - 5.2
 db:
     - postgresql
+dbversions:
+    postgresql: ['9.6','10', '11', '12']
