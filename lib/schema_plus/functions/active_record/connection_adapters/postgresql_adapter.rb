@@ -9,18 +9,30 @@ module SchemaPlus::Functions
           super(function_name, clean_params, options)
         end
 
+        def postgresql_version_at_least?(env, required)
+          @postgresql_version ||= begin
+                                    env.connection.select_value("SHOW server_version").match(/(\d+\.\d+)/)[1]
+                                  end
+          Gem::Version.new(@postgresql_version) >= Gem::Version.new(required)
+        end
+
         def functions(name = nil) #:nodoc:
           SchemaMonkey::Middleware::Schema::Functions.start(connection: self, query_name: name, functions: []) do |env|
+            is_agg_column = if postgresql_version_at_least?(env, '11.0')
+                              "prokind = 'a'"
+                            else
+                              "proisagg"
+                            end
             sql = <<-SQL
-            SELECT P.proname as function_name, pg_get_function_identity_arguments(P.oid), proisagg as is_agg
-              FROM pg_proc P
-            WHERE
-                  pronamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false))) 
-              AND NOT EXISTS (SELECT 1 FROM pg_depend WHERE classid = 'pg_proc'::regclass 
-                    AND objid = p.oid AND deptype = 'i')
-              AND NOT EXISTS (SELECT 1 FROM pg_depend WHERE classid = 'pg_proc'::regclass
-                    AND objid = p.oid AND refclassid = 'pg_extension'::regclass AND deptype = 'e')
-            ORDER BY 1,2
+              SELECT P.proname as function_name, pg_get_function_identity_arguments(P.oid), #{is_agg_column} as is_agg
+                FROM pg_proc P
+              WHERE
+                    pronamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false))) 
+                AND NOT EXISTS (SELECT 1 FROM pg_depend WHERE classid = 'pg_proc'::regclass 
+                      AND objid = p.oid AND deptype = 'i')
+                AND NOT EXISTS (SELECT 1 FROM pg_depend WHERE classid = 'pg_proc'::regclass
+                      AND objid = p.oid AND refclassid = 'pg_extension'::regclass AND deptype = 'e')
+              ORDER BY 1,2
             SQL
 
             env.functions += env.connection.query(sql, env.query_name).map do |row|
