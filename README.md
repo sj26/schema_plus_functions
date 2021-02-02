@@ -91,6 +91,7 @@ SchemaPlus::Functions is tested on:
 
 ## History
 
+* 0.2.0 - Add suppot for PostgreSQL 11+
 * 0.1.0 - Initial release
 
 ## Development & Testing
