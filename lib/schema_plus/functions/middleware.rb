@@ -11,7 +11,7 @@ module SchemaPlus::Functions
             heredelim                              = "END_FUNCTION_#{function_name.upcase}"
             extra_options                          = ", function_type: :#{function_type}" if function_type.present?
             statement                              = <<~ENDFUNCTION
-                create_function "#{function_name}", "#{full_params}", <<-'#{heredelim}', :force => true#{extra_options}
+              create_function "#{function_name}", "#{full_params}", <<-'#{heredelim}', :force => true#{extra_options}
               #{definition}
                 #{heredelim}
             ENDFUNCTION
