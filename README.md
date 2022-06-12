@@ -101,9 +101,10 @@ SchemaPlus::Functions is tested on:
 <!-- SCHEMA_DEV: MATRIX - end -->
 
 ## History
-* 1.0.0 - Drop AR < 5.2, add <= 6.0 and Ruby 3.0
-* 0.2.0 - Add suppot for PostgreSQL 11+
-* 0.1.0 - Initial release
+* **1.0.1** - Add AR 6.1 and 7.0 as well as Ruby 3.1
+* **1.0.0** - Drop AR < 5.2, add <= 6.0 and Ruby 3.0
+* **0.2.0** - Add suppot for PostgreSQL 11+
+* **0.1.0** - Initial release
 
 ## Development & Testing
 
