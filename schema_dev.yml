@@ -9,6 +9,7 @@ activerecord:
     - 6.1
     - 7.0
 db:
+    - mysql2
     - postgresql
 dbversions:
     postgresql: ['9.6','10', '11', '12']

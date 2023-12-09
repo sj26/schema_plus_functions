@@ -10,6 +10,7 @@ require_relative 'functions/middleware'
 module SchemaPlus::Functions
   module ActiveRecord
     module ConnectionAdapters
+      autoload :Mysql2Adapter, 'schema_plus/functions/active_record/connection_adapters/mysql2_adapter'
       autoload :PostgresqlAdapter, 'schema_plus/functions/active_record/connection_adapters/postgresql_adapter'
     end
   end

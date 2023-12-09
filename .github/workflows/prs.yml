@@ -29,6 +29,7 @@ jobs:
         - '6.1'
         - '7.0'
         db:
+        - mysql2
         - skip
         dbversion:
         - skip
@@ -252,6 +253,9 @@ jobs:
           dbversion: '12'
     env:
       BUNDLE_GEMFILE: "${{ github.workspace }}/gemfiles/activerecord-${{ matrix.activerecord }}/Gemfile.${{ matrix.db }}"
+      MYSQL_DB_HOST: 127.0.0.1
+      MYSQL_DB_USER: root
+      MYSQL_DB_PASS: database
       POSTGRESQL_DB_HOST: 127.0.0.1
       POSTGRESQL_DB_USER: schema_plus_test
       POSTGRESQL_DB_PASS: database
@@ -264,6 +268,17 @@ jobs:
         bundler-cache: true
     - name: Run bundle update
       run: bundle update
+    - name: Start Mysql
+      if: matrix.db == 'mysql2'
+      run: |
+        docker run --rm --detach \
+          -e MYSQL_ROOT_PASSWORD=$MYSQL_DB_PASS \
+          -p 3306:3306 \
+          --health-cmd "mysqladmin ping --host=127.0.0.1 --password=$MYSQL_DB_PASS --silent" \
+          --health-interval 5s \
+          --health-timeout 5s \
+          --health-retries 5 \
+          --name database mysql:5.6
     - name: Start Postgresql
       if: matrix.db == 'postgresql'
       run: |
